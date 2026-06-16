@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 650">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#f8fafc"/>
+      <stop offset=".55" stop-color="#dbeafe"/>
+      <stop offset="1" stop-color="#93c5fd"/>
+    </linearGradient>
+    <pattern id="mesh" width="42" height="42" patternUnits="userSpaceOnUse">
+      <path d="M0 21h42M21 0v42M0 0l42 42M42 0 0 42" stroke="#082247" stroke-opacity=".24" stroke-width="2"/>
+      <circle cx="21" cy="21" r="3" fill="#5b2bbf" opacity=".45"/>
+    </pattern>
+  </defs>
+  <rect width="900" height="650" fill="url(#bg)"/>
+  <rect width="900" height="650" fill="url(#mesh)"/>
+  <path d="M0 0h900v650H0z" fill="none" stroke="#ffffff" stroke-width="34" opacity=".25"/>
+  <text x="64" y="560" fill="#082247" font-family="Poppins,Arial" font-size="46" font-weight="800">Embroidery Net Fabric</text>
+</svg>

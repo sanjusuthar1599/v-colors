@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 650">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#111827"/>
+      <stop offset=".5" stop-color="#5b2bbf"/>
+      <stop offset="1" stop-color="#7f1d1d"/>
+    </linearGradient>
+    <filter id="soft"><feTurbulence type="fractalNoise" baseFrequency=".015" numOctaves="4"/><feColorMatrix type="saturate" values=".35"/><feBlend mode="soft-light" in2="SourceGraphic"/></filter>
+  </defs>
+  <rect width="900" height="650" fill="url(#bg)"/>
+  <rect width="900" height="650" filter="url(#soft)" opacity=".55"/>
+  <path d="M110 500c95-150 260-150 355-8s250 141 335-4" fill="none" stroke="#d4af37" stroke-width="24" stroke-linecap="round" opacity=".55"/>
+  <text x="64" y="560" fill="#fff" font-family="Poppins,Arial" font-size="46" font-weight="800">Cotton Velvet Fabric</text>
+</svg>

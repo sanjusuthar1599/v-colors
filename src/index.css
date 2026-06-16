@@ -1,0 +1,265 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Poppins:wght@600;700;800;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", Georgia, "Times New Roman", serif;
+  --color-navy: #082247;
+  --color-purple: #5b2bbf;
+  --color-gold: #c99a2e;
+  --color-logo-pink: #ed1e8f;
+  --color-logo-yellow: #ffd31a;
+  --color-logo-green: #35d86a;
+  --color-logo-blue: #159fe8;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+  font-family: var(--font-sans);
+  background:
+    radial-gradient(circle at 8% 0%, rgba(237, 30, 143, 0.08), transparent 28%),
+    radial-gradient(circle at 92% 8%, rgba(21, 159, 232, 0.1), transparent 30%),
+    #ffffff;
+  color: #0f172a;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+a {
+  cursor: pointer;
+}
+
+.container {
+  width: min(1180px, calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+.section {
+  padding-block: clamp(4rem, 7vw, 6.5rem);
+}
+
+.page-hero {
+  position: relative;
+  overflow: hidden;
+  padding-block: clamp(4rem, 8vw, 6.5rem);
+  color: var(--color-navy);
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9) 48%, rgba(255, 255, 255, 0.6)),
+    url('https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?auto=format&fit=crop&w=1800&q=85') center / cover;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.page-hero::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 9px;
+  content: "";
+  background: linear-gradient(180deg, #ed1e8f, #ffd31a, #35d86a, #159fe8, #5b2bbf);
+}
+
+.page-hero::after {
+  position: absolute;
+  right: min(7vw, 90px);
+  bottom: -70px;
+  width: 280px;
+  height: 280px;
+  content: "";
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(21, 159, 232, 0.18), transparent 68%);
+  pointer-events: none;
+}
+
+.page-title {
+  position: relative;
+  max-width: 820px;
+  font-family: var(--font-display);
+  font-size: clamp(2.15rem, 5.5vw, 4.4rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.eyebrow {
+  position: relative;
+  margin-bottom: 1rem;
+  color: var(--color-gold);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+.field {
+  width: 100%;
+  border-radius: 1.25rem;
+  border: 1px solid rgb(226 232 240);
+  background: white;
+  padding: 0.95rem 1.1rem;
+  color: #0f172a;
+  outline: none;
+}
+
+.field:focus {
+  border-color: var(--color-logo-blue);
+  box-shadow: 0 0 0 4px rgb(21 159 232 / 0.13);
+}
+
+.card {
+  border: 1px solid rgb(226 232 240);
+  border-radius: 2rem;
+  background: white;
+  padding: 1.6rem;
+  box-shadow: 0 18px 45px rgb(15 23 42 / 0.08);
+}
+
+.card p,
+.card li {
+  color: #475569;
+  line-height: 1.75;
+}
+
+.card h2 {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--color-navy);
+}
+
+.bg-logo-gradient {
+  background: #d4a53a;
+}
+
+.text-logo-gradient {
+  background-image: linear-gradient(135deg, #ed1e8f, #159fe8, #5b2bbf);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ── Mobile-only fixes (max-width: 767px) — desktop untouched ── */
+@media (max-width: 767px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  .announcement-bar {
+    display: none !important;
+  }
+
+  .page-hero {
+    display: flex;
+    align-items: center;
+    height: auto !important;
+    min-height: 420px;
+    padding-block: 5rem 2.5rem !important;
+  }
+
+  .page-hero video {
+    object-fit: cover !important;
+    object-position: center center !important;
+  }
+
+  .bg-hero-section > .absolute {
+    height: 100% !important;
+  }
+
+  .page-hero .page-title,
+  .page-hero h1 {
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: clamp(1.6rem, 6.5vw, 2.15rem) !important;
+    line-height: 1.15 !important;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .bg-hero-section {
+    display: flex;
+    align-items: center;
+    height: auto !important;
+    min-height: 55vh !important;
+    padding-block: 6rem 2.5rem !important;
+    background-size: cover !important;
+    background-position: center center !important;
+  }
+
+  .bg-hero-section h1 {
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: clamp(1.6rem, 6.5vw, 2.15rem) !important;
+    line-height: 1.15 !important;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .about-hero {
+    min-height: 480px !important;
+  }
+
+  .about-hero > img {
+    position: absolute;
+    inset: 0;
+    height: 100% !important;
+    min-height: 480px;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .about-hero-content {
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+    max-width: 100% !important;
+    width: 100%;
+  }
+
+  .about-hero-content h2 {
+    font-size: clamp(1.75rem, 7.5vw, 2.5rem) !important;
+    line-height: 1.1 !important;
+  }
+
+  .about-hero-content p {
+    font-size: 0.95rem !important;
+    line-height: 1.65 !important;
+  }
+
+  .home-hero-content {
+    min-height: 520px !important;
+    padding-block: 5rem 2.5rem !important;
+  }
+
+  .home-hero-content h1 {
+    font-size: clamp(1.6rem, 6.5vw, 2.15rem) !important;
+    line-height: 1.15 !important;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .home-hero-content > div > p,
+  .home-hero-content > div > p + h1 + p {
+    font-size: 0.95rem !important;
+    line-height: 1.65 !important;
+  }
+
+  .home-hero-content > div > p:first-child {
+    font-size: 0.7rem !important;
+    letter-spacing: 0.2em !important;
+  }
+
+  .home-hero-content .company-grid {
+    width: 100% !important;
+  }
+
+  .home-hero .home-hero-bg img {
+    object-fit: cover;
+    object-position: center center;
+  }
+}

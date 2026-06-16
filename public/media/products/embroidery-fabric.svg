@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 650">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#f7d7df"/>
+      <stop offset=".5" stop-color="#c64d7a"/>
+      <stop offset="1" stop-color="#5b2bbf"/>
+    </linearGradient>
+    <pattern id="stitch" width="70" height="70" patternUnits="userSpaceOnUse">
+      <path d="M35 9c15 0 26 11 26 26S50 61 35 61 9 50 9 35 20 9 35 9Z" fill="none" stroke="#fff5cf" stroke-width="5"/>
+      <path d="M35 18v34M18 35h34" stroke="#ffffff" stroke-opacity=".65" stroke-width="3"/>
+    </pattern>
+  </defs>
+  <rect width="900" height="650" fill="url(#bg)"/>
+  <rect width="900" height="650" fill="url(#stitch)" opacity=".72"/>
+  <path d="M0 500c170-80 310-70 460-25 150 44 275 68 440-25v200H0Z" fill="#082247" opacity=".42"/>
+  <text x="64" y="560" fill="#fff" font-family="Poppins,Arial" font-size="46" font-weight="800">Jari Net Embroidery</text>
+</svg>
