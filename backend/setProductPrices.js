@@ -1,8 +1,6 @@
-import dotenv from 'dotenv'
+import './utils/loadEnv.js'
 import connectDB from './config/db.js'
 import Product from './models/Product.js'
-
-dotenv.config()
 
 const categoryDefaults = {
   'Jari Net Embroidery Fabric': { priceAmount: 290, price: 'INR 290 / Meter' },

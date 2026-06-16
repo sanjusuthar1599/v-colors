@@ -1,12 +1,10 @@
-import dotenv from 'dotenv'
+import './utils/loadEnv.js'
 import connectDB from './config/db.js'
 import Category from './models/Category.js'
 import Product from './models/Product.js'
 import User from './models/User.js'
 import { resolveImageUrl } from './utils/resolveImageUrl.js'
-import { categories, products } from '../src/data/companyData.js'
-
-dotenv.config()
+import { categories, products } from './data/companyData.js'
 
 const categoryNames = categories
 
