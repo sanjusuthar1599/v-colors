@@ -6,6 +6,7 @@ import morgan from 'morgan'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import mongoose from 'mongoose'
+import { ensureDbConnected } from './config/db.js'
 import authRoutes from './routes/authRoutes.js'
 import categoryRoutes from './routes/categoryRoutes.js'
 import contactRoutes from './routes/contactRoutes.js'
@@ -53,6 +54,14 @@ const apiLimiter = rateLimit({
 })
 
 app.use('/api', apiLimiter)
+app.use('/api', async (_req, res, next) => {
+  try {
+    await ensureDbConnected()
+    next()
+  } catch {
+    res.status(503).json({ message: 'Database is waking up. Please try again in a few seconds.' })
+  }
+})
 app.use('/api/auth', authRoutes)
 app.use('/api/products', productRoutes)
 app.use('/api/categories', categoryRoutes)

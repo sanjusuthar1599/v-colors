@@ -17,7 +17,7 @@ export const mediaAssets = {
   products: {
     embroideryFabric: 'public/media/gallery/embroideryFabric.webp',
     nylonNetFabricforvcolors: 'public/media/gallery/nylonNetFabric.jpg',
-    jacquardFabric: 'public/media/gallery/jacquardFabric.jpg',
+    jacquardFabric: 'public/media/gallery/jacquardFabric.jpg',  
     velvetFabric: 'public/media/gallery/velvetFabric.webp',
     digitalPrintFabric: 'public/media/gallery/digitalPrintFabric.webp',
     fancyLace: 'public/media/gallery/fancyLace.jpg',

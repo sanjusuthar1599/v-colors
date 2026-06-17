@@ -2,20 +2,15 @@ import './utils/loadEnv.js'
 import connectDB from './config/db.js'
 import Category from './models/Category.js'
 import Product from './models/Product.js'
-import User from './models/User.js'
 import { resolveImageUrl } from './utils/resolveImageUrl.js'
+import { ensureAdminUser } from './utils/ensureAdmin.js'
 import { categories, products } from './data/companyData.js'
 
 const categoryNames = categories
 
 await connectDB()
 
-const adminEmail = process.env.ADMIN_EMAIL || 'admin@vcolors.in'
-let admin = await User.findOne({ email: adminEmail })
-if (!admin) {
-  admin = new User({ name: 'V Colors Admin', email: adminEmail, password: process.env.ADMIN_PASSWORD || 'admin123', role: 'admin' })
-  await admin.save()
-}
+await ensureAdminUser()
 
 for (const name of categoryNames) {
   await Category.findOneAndUpdate(

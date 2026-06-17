@@ -2,6 +2,8 @@ import mongoose from 'mongoose'
 
 const DEFAULT_DB = 'vcolors'
 
+let reconnectTimer = null
+
 /** URIs without a database name connect to empty `test` on Atlas. */
 export function normalizeMongoUri(rawUri) {
   const uri = rawUri || 'mongodb://127.0.0.1:27017/vcolors'
@@ -25,13 +27,22 @@ function getMongoUri() {
 const options = {
   serverSelectionTimeoutMS: 10000,
   maxPoolSize: 10,
+  socketTimeoutMS: 45000,
+  autoIndex: true,
 }
 
 const connectDB = async () => {
   const uri = getMongoUri()
 
   if (mongoose.connection.readyState === 1) {
-    console.log(`MongoDB already connected (${mongoose.connection.name} @ ${mongoose.connection.host})`)
+    return
+  }
+
+  if (mongoose.connection.readyState === 2) {
+    await new Promise((resolve, reject) => {
+      mongoose.connection.once('connected', resolve)
+      mongoose.connection.once('error', reject)
+    })
     return
   }
 
@@ -41,7 +52,7 @@ const connectDB = async () => {
   } catch (error) {
     console.error('MongoDB connection failed:', error.message)
     if (process.env.NODE_ENV === 'production') {
-      process.exit(1)
+      throw error
     }
     console.log('[MongoDB] Retrying in 5 seconds...')
     await new Promise((resolve) => setTimeout(resolve, 5000))
@@ -49,8 +60,39 @@ const connectDB = async () => {
   }
 }
 
+export async function ensureDbConnected() {
+  if (mongoose.connection.readyState === 1) return
+
+  if (reconnectTimer) {
+    await new Promise((resolve) => {
+      const check = () => {
+        if (mongoose.connection.readyState === 1) resolve()
+        else setTimeout(check, 250)
+      }
+      check()
+    })
+    if (mongoose.connection.readyState === 1) return
+  }
+
+  await connectDB()
+}
+
+function scheduleReconnect() {
+  if (reconnectTimer) return
+  reconnectTimer = setTimeout(async () => {
+    reconnectTimer = null
+    try {
+      await connectDB()
+    } catch (error) {
+      console.error('[MongoDB] reconnect failed:', error.message)
+      scheduleReconnect()
+    }
+  }, 3000)
+}
+
 mongoose.connection.on('disconnected', () => {
-  console.warn('[MongoDB] disconnected')
+  console.warn('[MongoDB] disconnected — scheduling reconnect')
+  scheduleReconnect()
 })
 
 mongoose.connection.on('error', (error) => {
