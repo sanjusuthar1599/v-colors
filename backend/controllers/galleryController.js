@@ -1,14 +1,21 @@
 import Gallery from '../models/Gallery.js'
+import { normalizeMediaPath, resolveApiMediaUrl } from '../utils/mediaUrl.js'
 import { uploadFileToCloudinary } from '../utils/uploadToCloudinary.js'
 
+function serializeGalleryItem(item, req) {
+  const doc = typeof item.toObject === 'function' ? item.toObject() : item
+  return { ...doc, image: resolveApiMediaUrl(doc.image, req) }
+}
+
 async function resolveGalleryImage(req) {
-  if (!req.file) return req.body.image
+  if (!req.file) return normalizeMediaPath(req.body.image)
   return await uploadFileToCloudinary(req.file, 'v-colors/gallery')
 }
 
-export async function getGallery(_req, res, next) {
+export async function getGallery(req, res, next) {
   try {
-    res.json(await Gallery.find().sort('-createdAt'))
+    const items = await Gallery.find().sort('-createdAt')
+    res.json(items.map((item) => serializeGalleryItem(item, req)))
   } catch (error) { next(error) }
 }
 
@@ -16,7 +23,7 @@ export async function createGalleryItem(req, res, next) {
   try {
     const image = await resolveGalleryImage(req)
     const item = await Gallery.create({ ...req.body, image })
-    res.status(201).json(item)
+    res.status(201).json(serializeGalleryItem(item, req))
   } catch (error) { next(error) }
 }
 

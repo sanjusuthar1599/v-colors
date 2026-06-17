@@ -3,6 +3,7 @@ import { FiX } from 'react-icons/fi'
 import CompanyImage from '../components/CompanyImage'
 import SEO from '../components/SEO'
 import SectionHeader from '../components/SectionHeader'
+import { mediaAssets } from '../data/mediaAssets'
 import { useGallery } from '../hooks/useGallery'
 
 export default function Gallery() {
@@ -18,7 +19,7 @@ export default function Gallery() {
       <section
   className="bg-hero-section relative min-h-[70vh] flex items-center overflow-hidden"
   style={{
-    backgroundImage: "url('/media/gallery/gallaryInfrastructure.jpg')",
+    backgroundImage: `url('${mediaAssets.company.galleryHero}')`,
     backgroundSize: "cover",
     backgroundPosition: "center",
     backgroundRepeat: "no-repeat",

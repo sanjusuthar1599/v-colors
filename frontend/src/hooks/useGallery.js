@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { galleryImages as fallbackImages } from '../data/companyData'
 import { galleryService } from '../services/api'
+import { resolveMediaUrl } from '../utils/resolveMediaUrl'
 
 export function useGallery() {
   const [items, setItems] = useState([])
@@ -14,7 +15,7 @@ export function useGallery() {
         const { data } = await galleryService.list()
         const normalized = data.map((item) => ({
           id: item._id,
-          image: item.image,
+          image: resolveMediaUrl(item.image),
           category: item.category || item.title || 'Gallery',
         }))
         if (active) setItems(normalized.length ? normalized : fallbackImages)

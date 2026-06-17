@@ -11,6 +11,7 @@ import { mediaAssets } from '../data/mediaAssets'
 import { useEffect, useState } from 'react'
 import { useProducts } from '../hooks/useProducts'
 import { useTestimonials } from '../hooks/useTestimonials'
+import { resolveMediaUrl } from '../utils/resolveMediaUrl'
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -42,7 +43,7 @@ const categoryCards = categories.map((category) => {
   const product = categoryProducts[0] || products.find((item) => item.category?.toLowerCase().includes(category.toLowerCase().split(' ')[0]))
   return {
     name: category,
-    image: product?.image || mediaAssets.products.embroideryFabric,
+    image: product?.image || mediaAssets.products.embroideryFabricFallback,
     count: categoryProducts.length || 1,
   }
 })
@@ -53,7 +54,7 @@ const videoCards = (products.filter((product) => product.video).length ? product
   title: item.name,
   category: item.category || 'V.Colors Fabric',
   video: item.video || showcaseVideo,
-  poster: item.image || mediaAssets.products.embroideryFabric,
+  poster: item.image || mediaAssets.products.embroideryFabricFallback,
   price: item.priceAmount ? `INR ${item.priceAmount}` : index % 2 === 0 ? 'Wholesale' : 'Inquiry',
 }))
 
@@ -73,7 +74,7 @@ const videoCards = (products.filter((product) => product.video).length ? product
 {mediaAssets.company.heroSlides.map((image, index) => (
   <motion.img
     key={image}
-    src={image}
+    src={resolveMediaUrl(image)}
     alt={`Slide ${index + 1}`}
     className="absolute inset-0 h-full w-full object-cover"
     initial={false}
@@ -170,7 +171,7 @@ const videoCards = (products.filter((product) => product.video).length ? product
             >
               <div className="relative aspect-[9/16] w-full">
                 <video
-                  src={video.video}
+                  src={resolveMediaUrl(video.video)}
                   poster={video.poster}
                   className="absolute inset-0 h-full w-full object-cover"
                   autoPlay
@@ -189,7 +190,7 @@ const videoCards = (products.filter((product) => product.video).length ? product
                 )}
 
                 <div className="absolute inset-x-0 bottom-0 flex items-center gap-2 bg-black/80 px-2 py-2">
-                  <img src={video.poster} alt="" className="h-9 w-9 shrink-0 rounded-md object-cover ring-1 ring-white/20" />
+                  <img src={resolveMediaUrl(video.poster)} alt="" className="h-9 w-9 shrink-0 rounded-md object-cover ring-1 ring-white/20" />
                   <div className="min-w-0 flex-1">
                     <p className="line-clamp-2 text-[9px] font-semibold leading-tight text-white">{video.title}</p>
                     <p className="mt-0.5 flex items-center gap-1 text-[9px] font-bold text-white">
@@ -215,7 +216,7 @@ const videoCards = (products.filter((product) => product.video).length ? product
         <div className="group relative h-[360px] overflow-hidden rounded-[28px]">
   <motion.img
     key={activeCategory?.name}
-    src={activeCategory?.image}
+    src={resolveMediaUrl(activeCategory?.image)}
     alt={activeCategory?.name}
     className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
     initial={{ opacity: 0, scale: 1.08 }}

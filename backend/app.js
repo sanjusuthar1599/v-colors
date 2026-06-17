@@ -7,6 +7,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import mongoose from 'mongoose'
 import { ensureDbConnected } from './config/db.js'
+import { createCorsOptions } from './utils/corsOrigins.js'
 import authRoutes from './routes/authRoutes.js'
 import categoryRoutes from './routes/categoryRoutes.js'
 import contactRoutes from './routes/contactRoutes.js'
@@ -23,7 +24,7 @@ const __dirname = path.dirname(__filename)
 const isDev = process.env.NODE_ENV !== 'production'
 
 app.use(helmet({ crossOriginResourcePolicy: false }))
-app.use(cors({ origin: process.env.CLIENT_URL || '*', credentials: true }))
+app.use(cors(createCorsOptions()))
 app.use(express.json({ limit: '1mb' }))
 app.use(express.urlencoded({ extended: true }))
 app.use(morgan('dev'))

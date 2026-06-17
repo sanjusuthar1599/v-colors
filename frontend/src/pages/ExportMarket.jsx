@@ -3,6 +3,7 @@ import Counter from '../components/Counter'
 import SEO from '../components/SEO'
 import SectionHeader from '../components/SectionHeader'
 import { exportMarkets } from '../data/companyData'
+import { mediaAssets } from '../data/mediaAssets'
 
 export default function ExportMarket() {
   return (
@@ -11,7 +12,7 @@ export default function ExportMarket() {
       <section
   className="bg-hero-section relative min-h-[70vh] flex items-center overflow-hidden"
   style={{
-    backgroundImage: "url('/media/gallery/buyernetwork.png')",
+    backgroundImage: `url('${mediaAssets.company.buyerNetworkHero}')`,
     backgroundSize: "cover",
     backgroundPosition: "center",
     backgroundRepeat: "no-repeat",

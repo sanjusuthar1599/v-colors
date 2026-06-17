@@ -4,6 +4,7 @@ import SEO from '../components/SEO'
 import SectionHeader from '../components/SectionHeader'
 import { company } from '../data/companyData'
 import { mediaAssets } from '../data/mediaAssets'
+import { resolveMediaUrl } from '../utils/resolveMediaUrl'
 
 const values = ['State-of-the-art Infrastructure', 'Experienced Team', 'Client Centric Approach', 'Ethical Business Policies']
 const timeline = ['Established in Surat in 2009', "GST registered in Jul'17", 'Expanded net, velvet, jacquard and garment fabric range', 'Serving wholesale, retail and garment industry buyers']
@@ -16,7 +17,7 @@ export default function About() {
 <section className="about-hero relative overflow-hidden min-h-[700px]">
   {/* Background Image */}
   <img
-    src="/media/gallery/herosection4.png"
+    src={resolveMediaUrl(mediaAssets.company.heroSlides[0] || mediaAssets.company.heroPoster)}
     alt="V Colors Store"
     className="h-[700px] w-full object-cover"
   />

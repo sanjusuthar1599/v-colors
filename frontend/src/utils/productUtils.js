@@ -1,23 +1,27 @@
 import { mediaAssets } from '../data/mediaAssets'
 
+import { resolveMediaUrl } from './resolveMediaUrl'
+
 const categoryImages = [
-  ['jari', mediaAssets.products.embroideryFabric],
-  ['embroidery', mediaAssets.products.nylonNetFabric],
-  ['jacquard', mediaAssets.products.jacquardFabric],
-  ['velvet', mediaAssets.products.velvetFabric],
-  ['fancy', mediaAssets.products.digitalPrintFabric],
-  ['lace', mediaAssets.products.fancyLace],
+  ['jari', mediaAssets.products.embroideryFabric, mediaAssets.products.embroideryFabricFallback],
+  ['embroidery', mediaAssets.products.nylonNetFabric, mediaAssets.products.nylonNetFabricFallback],
+  ['jacquard', mediaAssets.products.jacquardFabric, mediaAssets.products.jacquardFabricFallback],
+  ['velvet', mediaAssets.products.velvetFabric, mediaAssets.products.velvetFabricFallback],
+  ['fancy', mediaAssets.products.digitalPrintFabric, mediaAssets.products.digitalPrintFabricFallback],
+  ['lace', mediaAssets.products.fancyLace, mediaAssets.products.fancyLaceFallback],
 ]
 
 function getDefaultImage(category = '') {
   const match = categoryImages.find(([key]) => category.toLowerCase().includes(key))
-  return match?.[1] || mediaAssets.products.embroideryFabric
+  return resolveMediaUrl(match?.[1] || match?.[2] || mediaAssets.products.embroideryFabricFallback)
 }
 
 function getUsableImage(image, category) {
   if (!image) return getDefaultImage(category)
-  if (image.includes('tradeindia.com/products') || image.includes('indiamart.com/proddetail')) return getDefaultImage(category)
-  return image
+  if (image.includes('tradeindia.com/products') || image.includes('indiamart.com/proddetail')) {
+    return getDefaultImage(category)
+  }
+  return resolveMediaUrl(image)
 }
 
 function resolvePriceAmount(product) {
@@ -32,14 +36,15 @@ export function normalizeProduct(product) {
   const category = product.category?.name || product.categoryName || product.category || 'New Items'
   const image = getUsableImage(product.image || product.images?.[0], category)
   const priceAmount = resolvePriceAmount(product)
+  const videos = product.videos || (product.video ? [product.video] : [])
 
   return {
     ...product,
     id,
     category,
     image,
-    video: product.video || product.videos?.[0] || '',
-    videos: product.videos || (product.video ? [product.video] : []),
+    video: resolveMediaUrl(product.video || videos[0] || ''),
+    videos: videos.map(resolveMediaUrl),
     priceAmount,
     priceLabel: product.price || (priceAmount ? `INR ${priceAmount}` : 'Price on request'),
     specs: product.specs || product.specifications || [],

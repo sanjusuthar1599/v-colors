@@ -5,7 +5,9 @@ import ProductCard from '../components/ProductCard'
 import SEO from '../components/SEO'
 import SectionHeader from '../components/SectionHeader'
 import { categories } from '../data/companyData'
+import { mediaAssets } from '../data/mediaAssets'
 import { useProducts } from '../hooks/useProducts'
+import { resolveMediaUrl } from '../utils/resolveMediaUrl'
 
 export default function Products() {
   const [active, setActive] = useState('All')
@@ -31,7 +33,7 @@ export default function Products() {
     playsInline
     className="absolute inset-0 h-full w-full object-cover"
   >
-    <source src="/media/gallery/Product.mp4" type="video/mp4" />
+    <source src={resolveMediaUrl(mediaAssets.company.productShowcaseVideo)} type="video/mp4" />
   </video>
 
   {/* Optional Dark Overlay */}

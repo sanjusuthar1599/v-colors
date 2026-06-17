@@ -2,6 +2,7 @@ import './utils/loadEnv.js'
 import connectDB from './config/db.js'
 import Category from './models/Category.js'
 import Product from './models/Product.js'
+import { normalizeMediaPath } from './utils/mediaUrl.js'
 import { resolveImageUrl } from './utils/resolveImageUrl.js'
 import { ensureAdminUser } from './utils/ensureAdmin.js'
 import { categories, products } from './data/companyData.js'
@@ -37,7 +38,7 @@ for (const product of products) {
       slug,
       categoryName: product.category,
       description: product.description,
-      images: [product.image].filter(Boolean),
+      images: [normalizeMediaPath(product.image)].filter(Boolean),
       specifications: product.specs || [],
       applications: product.applications || [],
       priceAmount,
