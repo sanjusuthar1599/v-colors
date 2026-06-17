@@ -40,7 +40,6 @@ export const mediaAssets = {
       "/media/gallery/herosection1.webp",
       "/media/gallery/herosection2.webp",
       "/media/gallery/herosection3.webp",
-      
     ],
     heroPoster: 'https://images.unsplash.com/photo-1565610222536-ef125c59da2e?auto=format&fit=crop&w=1800&q=85',
     heroVideo: '/media/company/hero-video.mp4',
