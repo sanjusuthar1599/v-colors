@@ -16,6 +16,7 @@ import inquiryRoutes from './routes/inquiryRoutes.js'
 import orderRoutes from './routes/orderRoutes.js'
 import productRoutes from './routes/productRoutes.js'
 import testimonialRoutes from './routes/testimonialRoutes.js'
+import { isSmtpConfigured } from './utils/sendMail.js'
 import { errorHandler, notFound } from './middlewares/errorHandler.js'
 
 const app = express()
@@ -37,6 +38,7 @@ app.get('/api/health', (_req, res) => {
     status: mongoOk ? 'ok' : 'degraded',
     service: 'v-colors-api',
     mongo: mongoOk ? 'connected' : 'disconnected',
+    smtp: isSmtpConfigured() ? 'configured' : 'missing',
   })
 })
 

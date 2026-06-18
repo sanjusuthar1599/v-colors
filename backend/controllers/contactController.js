@@ -4,11 +4,14 @@ import { sendMail } from '../utils/sendMail.js'
 export async function createContactMessage(req, res, next) {
   try {
     const message = await ContactMessage.create(req.body)
-    await sendMail({
+    const mailResult = await sendMail({
       to: process.env.MAIL_TO,
       subject: 'New V Colors Contact Request',
       html: `<pre>${JSON.stringify(req.body, null, 2)}</pre>`,
     })
+    if (!mailResult.success && !mailResult.skipped) {
+      console.error('[email] Contact notification failed:', mailResult.error)
+    }
     res.status(201).json(message)
   } catch (error) { next(error) }
 }

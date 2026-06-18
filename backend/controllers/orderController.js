@@ -18,31 +18,46 @@ function parsePrice(product) {
 }
 
 async function notifyCustomer(order) {
-  if (order.customerMessageSent) return
+  if (order.customerMessageSent) return { success: true, alreadySent: true }
 
-  const customerEmail = order.shippingAddress?.email
+  const customerEmail = String(order.shippingAddress?.email || '').trim()
   const smsMessage = `Your V.Colors order ${order.orderNumber} has been placed successfully. Expected delivery within 3-5 working days. Thank you for shopping with V.Colors.`
   const emailHtml = buildOrderConfirmationEmail(order)
   const emailSubject = `V.Colors Order ${order.orderNumber} Confirmed`
+  const customerText = `Your V.Colors order ${order.orderNumber} is confirmed. Total: INR ${order.total}. Expected delivery within 3-5 working days.`
 
-  await Promise.allSettled([
-    sendSms({ to: order.shippingAddress.phone, message: smsMessage }),
-    sendMail({
+  let customerResult = { success: false, error: 'No customer email' }
+
+  if (customerEmail) {
+    customerResult = await sendMail({
       to: customerEmail,
       subject: emailSubject,
       html: emailHtml,
-      text: `Your V.Colors order ${order.orderNumber} is confirmed. Total: INR ${order.total}. Expected delivery within 3-5 working days.`,
-    }),
-    process.env.MAIL_TO ? sendMail({
+      text: customerText,
+    })
+  } else {
+    console.warn('[email] Order', order.orderNumber, 'has no customer email')
+  }
+
+  if (process.env.MAIL_TO) {
+    sendMail({
       to: process.env.MAIL_TO,
       subject: `New Order ${order.orderNumber}`,
       html: emailHtml,
-      text: `New order ${order.orderNumber} from ${customerEmail}. Total INR ${order.total}.`,
-    }) : Promise.resolve(),
-  ])
+      text: `New order ${order.orderNumber} from ${customerEmail || 'unknown'}. Total INR ${order.total}.`,
+    }).catch(() => {})
+  }
 
-  order.customerMessageSent = true
-  await order.save()
+  sendSms({ to: order.shippingAddress.phone, message: smsMessage }).catch(() => {})
+
+  if (customerResult.success) {
+    order.customerMessageSent = true
+    await order.save()
+    return customerResult
+  }
+
+  console.error('[email] Order confirmation not marked sent:', order.orderNumber, customerResult.error)
+  return customerResult
 }
 
 export async function createOrder(req, res, next) {

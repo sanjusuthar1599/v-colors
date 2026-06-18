@@ -4,7 +4,13 @@ import { sendMail } from '../utils/sendMail.js'
 export async function createInquiry(req, res, next) {
   try {
     const inquiry = await Inquiry.create(req.body)
-    await sendMail({ subject: 'New V Colors Product Inquiry', html: `<pre>${JSON.stringify(req.body, null, 2)}</pre>` })
+    const mailResult = await sendMail({
+      subject: 'New V Colors Product Inquiry',
+      html: `<pre>${JSON.stringify(req.body, null, 2)}</pre>`,
+    })
+    if (!mailResult.success && !mailResult.skipped) {
+      console.error('[email] Inquiry notification failed:', mailResult.error)
+    }
     res.status(201).json(inquiry)
   } catch (error) { next(error) }
 }
