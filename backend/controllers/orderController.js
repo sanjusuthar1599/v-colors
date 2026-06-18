@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import Order from '../models/Order.js'
 import Product from '../models/Product.js'
 import { buildOrderConfirmationEmail } from '../utils/orderEmailTemplate.js'
+import { getClientUrl } from '../utils/appUrls.js'
 import { sendMail } from '../utils/sendMail.js'
 import { sendSms } from '../utils/sendSms.js'
 
@@ -88,6 +89,7 @@ export async function createOrder(req, res, next) {
     })
 
     if (paymentMethod === 'stripe' && stripe) {
+      const clientUrl = getClientUrl()
       const session = await stripe.checkout.sessions.create({
         mode: 'payment',
         payment_method_types: ['card'],
@@ -100,8 +102,8 @@ export async function createOrder(req, res, next) {
           },
           quantity: item.quantity,
         })),
-        success_url: `${process.env.CLIENT_URL || 'http://localhost:5173'}/order-success/${order._id}?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${process.env.CLIENT_URL || 'http://localhost:5173'}/checkout?cancelled=true`,
+        success_url: `${clientUrl}/order-success/${order._id}?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${clientUrl}/checkout?cancelled=true`,
         metadata: { orderId: String(order._id) },
       })
       order.stripeSessionId = session.id

@@ -1,3 +1,5 @@
+import { getApiPublicUrl } from './appUrls.js'
+
 export function normalizeMediaPath(url) {
   if (!url) return ''
   const value = String(url).trim()
@@ -7,7 +9,7 @@ export function normalizeMediaPath(url) {
 }
 
 export function getApiBaseUrl(req) {
-  return (process.env.API_PUBLIC_URL || `${req.protocol}://${req.get('host')}`).replace(/\/$/, '')
+  return getApiPublicUrl(req)
 }
 
 export function resolveApiMediaUrl(url, req) {

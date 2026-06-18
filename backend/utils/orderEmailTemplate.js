@@ -1,8 +1,10 @@
+import { getApiPublicUrl, getClientUrl } from './appUrls.js'
+
 function absoluteMediaUrl(url) {
   if (!url) return ''
   if (url.startsWith('http')) return url
-  const base = process.env.API_PUBLIC_URL || `http://localhost:${process.env.PORT || 5000}`
-  return `${base.replace(/\/$/, '')}${url.startsWith('/') ? url : `/${url}`}`
+  const base = getApiPublicUrl()
+  return `${base}${url.startsWith('/') ? url : `/${url}`}`
 }
 
 function formatCurrency(amount) {
@@ -22,7 +24,7 @@ export function buildOrderConfirmationEmail(order) {
   const orderNumber = escapeHtml(order.orderNumber)
   const paymentLabel = order.paymentMethod === 'stripe' ? 'Online Payment' : 'Cash On Delivery'
   const paymentStatus = escapeHtml(order.paymentStatus || 'pending')
-  const trackUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/track-order`
+  const trackUrl = `${getClientUrl()}/track-order`
 
   const itemRows = (order.items || []).map((item) => {
     const productId = escapeHtml(item.product || '—')
