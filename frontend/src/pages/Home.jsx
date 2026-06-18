@@ -172,7 +172,7 @@ const videoCards = (products.filter((product) => product.video).length ? product
               <div className="relative aspect-[9/16] w-full">
                 <video
                   src={resolveMediaUrl(video.video)}
-                  poster={video.poster}
+                  poster={resolveMediaUrl(video.poster)}
                   className="absolute inset-0 h-full w-full object-cover"
                   autoPlay
                   muted

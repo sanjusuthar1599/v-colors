@@ -12,6 +12,9 @@ export const mediaAssets = {
     showroom: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?auto=format&fit=crop&w=1200&q=85',
     aboutFactory: '/media/gallery/factory_infrastructure.png',
     pageHero: 'https://images.unsplash.com/photo-1565610222536-ef125c59da2e?auto=format&fit=crop&w=1800&q=85',
+    manufacturingHero: '/media/gallery/Manufacturing.png',
+    galleryHero: '/media/gallery/gallaryInfrastructure.jpg',
+    buyerNetworkHero: '/media/gallery/buyernetwork.png',
   },
   products: {
     embroideryFabric: '/media/gallery/embroideryFabric.webp',
@@ -21,6 +24,12 @@ export const mediaAssets = {
     velvetFabric: '/media/gallery/velvetFabric.webp',
     digitalPrintFabric: '/media/gallery/digitalPrintFabric.webp',
     fancyLace: '/media/gallery/fancyLace.jpg',
+    embroideryFabricFallback: '/media/products/embroidery-fabric.svg',
+    nylonNetFabricFallback: '/media/products/nylon-net-fabric.svg',
+    jacquardFabricFallback: '/media/products/jacquard-fabric.svg',
+    velvetFabricFallback: '/media/products/velvet-fabric.svg',
+    digitalPrintFabricFallback: '/media/products/digital-print-fabric.svg',
+    fancyLaceFallback: '/media/products/fancy-lace.svg',
   },
   gallery: [
     { category: 'Factory Images', image: 'https://images.unsplash.com/photo-1581092160607-ee22731c4d76?auto=format&fit=crop&w=900&q=85' },

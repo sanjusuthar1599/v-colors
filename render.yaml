@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: v-colors-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CLIENT_URL
+        value: https://v-colors-fabric.onrender.com
+      - key: ALLOWED_ORIGINS
+        value: https://v-colors-fabric.onrender.com
+      - key: API_PUBLIC_URL
+        value: https://v-colors-2.onrender.com
+
+  - type: web
+    name: v-colors-fabric
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        value: https://v-colors-2.onrender.com/api

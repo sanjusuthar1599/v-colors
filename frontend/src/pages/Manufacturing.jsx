@@ -2,6 +2,7 @@ import SEO from '../components/SEO'
 import SectionHeader from '../components/SectionHeader'
 import { processSteps } from '../data/companyData'
 import { mediaAssets } from '../data/mediaAssets'
+import { resolveMediaUrl } from '../utils/resolveMediaUrl'
 
 export default function Manufacturing() {
   return (
@@ -10,7 +11,7 @@ export default function Manufacturing() {
 <section
   className="bg-hero-section relative overflow-hidden py-32 h-[530px]"
   style={{
-    backgroundImage: `url('${mediaAssets.company.manufacturingHero}')`,
+    backgroundImage: `url('${resolveMediaUrl(mediaAssets.company.manufacturingHero)}')`,
     backgroundSize: "cover",
     backgroundPosition: "center",
     backgroundRepeat: "no-repeat",

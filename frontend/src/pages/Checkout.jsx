@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { FiCreditCard, FiMapPin, FiTruck } from 'react-icons/fi'
+import { AnimatePresence, motion } from 'framer-motion'
+import { FiAlertCircle, FiCreditCard, FiMapPin, FiTruck, FiX } from 'react-icons/fi'
 import SEO from '../components/SEO'
 import { useCart } from '../context/CartContext'
 import { orderService } from '../services/api'
@@ -21,9 +22,20 @@ export default function Checkout() {
   const navigate = useNavigate()
   const { items, summary, clearCart } = useCart()
   const [shippingAddress, setShippingAddress] = useState(initialAddress)
-  const [paymentMethod, setPaymentMethod] = useState('cod')
+  const [paymentMethod, setPaymentMethod] = useState('stripe')
+  const [showCodModal, setShowCodModal] = useState(false)
   const [saving, setSaving] = useState(false)
   const [toast, setToast] = useState('')
+
+  const openCodUnavailableModal = (event) => {
+    event.preventDefault()
+    setShowCodModal(true)
+  }
+
+  const chooseOnlinePayment = () => {
+    setPaymentMethod('stripe')
+    setShowCodModal(false)
+  }
 
   const updateAddress = (event) => {
     setShippingAddress((current) => ({ ...current, [event.target.name]: event.target.value }))
@@ -32,6 +44,10 @@ export default function Checkout() {
   const submitOrder = async (event) => {
     event.preventDefault()
     if (!items.length) return navigate('/products')
+    if (paymentMethod === 'cod') {
+      setShowCodModal(true)
+      return
+    }
     setSaving(true)
     setToast('')
     try {
@@ -98,14 +114,20 @@ export default function Checkout() {
           <div className="mt-8">
             <h3 className="font-display text-2xl font-bold text-navy">Payment Method</h3>
             <div className="mt-4 grid gap-4 md:grid-cols-2">
-              <label className={`cursor-pointer rounded-3xl border p-5 ${paymentMethod === 'cod' ? 'border-logo-blue bg-logo-blue/10' : 'border-slate-200'}`}>
-                <input type="radio" name="paymentMethod" value="cod" checked={paymentMethod === 'cod'} onChange={(event) => setPaymentMethod(event.target.value)} className="sr-only" />
+              <button
+                type="button"
+                onClick={openCodUnavailableModal}
+                className="relative cursor-pointer rounded-3xl border border-slate-200 p-5 text-left transition hover:border-logo-blue/40 hover:bg-slate-50"
+              >
+                <span className="absolute right-4 top-4 rounded-full bg-amber-100 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-amber-800">
+                  Unavailable
+                </span>
                 <FiTruck className="text-3xl text-logo-blue" />
                 <b className="mt-3 block text-navy">Cash On Delivery</b>
                 <span className="text-sm text-slate-600">Pay when your fabric order is delivered.</span>
-              </label>
+              </button>
               <label className={`cursor-pointer rounded-3xl border p-5 ${paymentMethod === 'stripe' ? 'border-logo-blue bg-logo-blue/10' : 'border-slate-200'}`}>
-                <input type="radio" name="paymentMethod" value="stripe" checked={paymentMethod === 'stripe'} onChange={(event) => setPaymentMethod(event.target.value)} className="sr-only" />
+                <input type="radio" name="paymentMethod" value="stripe" checked={paymentMethod === 'stripe'} onChange={() => setPaymentMethod('stripe')} className="sr-only" />
                 <FiCreditCard className="text-3xl text-logo-blue" />
                 <b className="mt-3 block text-navy">Online Payment</b>
                 <span className="text-sm text-slate-600">Stripe checkout activates after secret key setup.</span>
@@ -141,6 +163,80 @@ export default function Checkout() {
           <p className="mt-5 rounded-2xl bg-logo-yellow/30 p-4 text-sm font-bold text-navy">Order success message: Your order has been placed successfully. Expected delivery within 3-5 working days.</p>
         </aside>
       </section>
+
+      <AnimatePresence>
+        {showCodModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.button
+              type="button"
+              aria-label="Close popup"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowCodModal(false)}
+              className="absolute inset-0 bg-navy/70 backdrop-blur-sm"
+            />
+            <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="cod-unavailable-title"
+              initial={{ opacity: 0, scale: 0.94, y: 24 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.94, y: 24 }}
+              transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+              className="relative w-full max-w-md overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-2xl shadow-slate-300/70"
+            >
+              <div className="bg-logo-gradient px-8 py-6 text-white">
+                <div className="flex items-start justify-between gap-4">
+                  <span className="grid h-14 w-14 place-items-center rounded-2xl bg-white/15 backdrop-blur">
+                    <FiTruck className="text-3xl" />
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setShowCodModal(false)}
+                    className="grid h-10 w-10 place-items-center rounded-full bg-white/15 transition hover:bg-white/25"
+                    aria-label="Close"
+                  >
+                    <FiX className="text-xl" />
+                  </button>
+                </div>
+                <h3 id="cod-unavailable-title" className="mt-5 font-display text-2xl font-bold">
+                  Cash On Delivery Unavailable
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-white/90">
+                  Currently we are not accepting Cash on Delivery orders.
+                </p>
+              </div>
+
+              <div className="px-8 py-7">
+                <div className="flex gap-3 rounded-2xl bg-amber-50 p-4 text-amber-900">
+                  <FiAlertCircle className="mt-0.5 shrink-0 text-xl text-amber-600" />
+                  <p className="text-sm leading-6">
+                    Please use <b>Online Payment</b> to place your order. COD will be enabled again soon.
+                  </p>
+                </div>
+
+                <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowCodModal(false)}
+                    className="rounded-full border border-slate-200 px-5 py-3.5 font-bold text-slate-700 transition hover:bg-slate-50"
+                  >
+                    Close
+                  </button>
+                  <button
+                    type="button"
+                    onClick={chooseOnlinePayment}
+                    className="rounded-full bg-logo-gradient px-5 py-3.5 font-bold text-white shadow-lg transition hover:opacity-95"
+                  >
+                    Use Online Payment
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </>
   )
 }
