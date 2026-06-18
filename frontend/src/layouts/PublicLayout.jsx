@@ -28,7 +28,7 @@ export default function PublicLayout() {
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur-xl">
+      <header className="z-50 border-b border-slate-200 bg-white shadow-sm backdrop-blur-xl max-lg:fixed max-lg:inset-x-0 max-lg:top-0 lg:sticky lg:top-0 lg:bg-white/95">
         <nav className="container flex h-[82px] items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
             <span className="grid h-16 w-16 place-items-center overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-slate-200">
@@ -77,7 +77,9 @@ export default function PublicLayout() {
           </div>
         )}
       </header>
-      <Outlet />
+      <div className="max-lg:pt-[82px]">
+        <Outlet />
+      </div>
       <footer className="bg-slate-950 text-white">
         <div className="container grid gap-10 py-14 md:grid-cols-4">
           <div className="md:col-span-2">
