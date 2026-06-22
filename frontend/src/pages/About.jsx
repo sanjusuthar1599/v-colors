@@ -1,119 +1,159 @@
-import AnimatedSection from '../components/AnimatedSection'
-import CompanyImage from '../components/CompanyImage'
+import { Link } from 'react-router-dom'
+import { FiAward, FiCheckCircle, FiTarget, FiEye } from 'react-icons/fi'
+import PageBanner from '../components/premium/PageBanner'
+import Reveal3D from '../components/interactive/Reveal3D'
+import Tilt3D from '../components/interactive/Tilt3D'
 import SEO from '../components/SEO'
-import SectionHeader from '../components/SectionHeader'
 import { company } from '../data/companyData'
 import { mediaAssets } from '../data/mediaAssets'
 import { resolveMediaUrl } from '../utils/resolveMediaUrl'
 
-const values = ['State-of-the-art Infrastructure', 'Experienced Team', 'Client Centric Approach', 'Ethical Business Policies']
-const timeline = ['Established in Surat in 2009', "GST registered in Jul'17", 'Expanded net, velvet, jacquard and garment fabric range', 'Serving wholesale, retail and garment industry buyers']
-const team = ['Procurement agents', 'Designers', 'Quality controllers', 'Warehousing & packaging experts', 'Sales and marketing executives']
+const milestones = [
+  { year: '2009', title: 'Founded in Surat', desc: 'Started as a textile manufacturing unit on Ring Road.' },
+  { year: '2014', title: 'Expanded Collections', desc: 'Added jacquard, velvet and fancy fabric lines.' },
+  { year: '2017', title: 'GST Registered', desc: 'Formal B2B workflows and wholesale supply structure.' },
+  { year: '2024', title: 'Digital Catalog', desc: 'Online fabric catalog and nationwide buyer reach.' },
+]
+
+const strengths = [
+  'Export-quality embroidery & jacquard fabrics',
+  'Factory-direct wholesale pricing from Surat',
+  'Flexible MOQ for wholesalers & garment makers',
+  'Pan-India dispatch with quality inspection',
+]
+
+const mosaic = [
+  mediaAssets.products.embroideryFabric,
+  mediaAssets.company.aboutFactory,
+  mediaAssets.products.velvetFabric,
+  mediaAssets.products.jacquardFabric,
+]
 
 export default function About() {
   return (
     <>
-      <SEO title="About Us" description="Learn about V.Colors, a Surat based manufacturer, exporter and supplier of brocade, viscose, nylon net, poly net, garment and jacquard fabrics." path="/about" />
-<section className="about-hero relative overflow-hidden min-h-[700px]">
-  {/* Background Image */}
-  <img
-    src={resolveMediaUrl(mediaAssets.company.heroSlides[0] || mediaAssets.company.heroPoster)}
-    alt="V Colors Store"
-    className="h-[700px] w-full object-cover"
-  />
+      <SEO title="About V.Colors" description="Surat textile manufacturer since 2009." path="/about" />
+      <PageBanner
+        eyebrow="Our Story"
+        title="We Build Trust Through Premium Fabrics"
+        description="Surat-based manufacturer of embroidery, jari net, jacquard, velvet and garment fabrics for wholesale buyers since 2009."
+        image={resolveMediaUrl(mediaAssets.company.aboutFactory)}
+        cta={{ href: '/inquiry', label: 'Request Quote' }}
+      />
 
-  {/* Dark Gradient Overlay */}
-  <div className="absolute inset-0 bg-gradient-to-r from-[#020b1f]/95 via-[#020b1f]/80 to-transparent" />
+      <section className="border-b border-slate-200 bg-white py-6">
+        <div className="premium-container grid grid-cols-2 gap-4 md:grid-cols-4">
+          {[['15+', 'Years'], ['5000+', 'Designs'], ['1000+', 'Buyers'], ['Pan India', 'Supply']].map(([v, l], index) => (
+            <Reveal3D key={l} delay={index * 0.05}>
+              <Tilt3D intensity={10}>
+                <div className="rounded-xl bg-[#FAFAFA] px-4 py-5 text-center ring-1 ring-slate-100">
+                  <p className="font-display text-2xl font-extrabold text-[#D4AF37]">{v}</p>
+                  <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-slate-500">{l}</p>
+                </div>
+              </Tilt3D>
+            </Reveal3D>
+          ))}
+        </div>
+      </section>
 
-  {/* Content */}
-  <div className="absolute inset-0 flex items-start">
-    <div className="about-hero-content max-w-[800px] pl-10 md:pl-44 pt-20 md:pt-16">
-      
-      <p className="mb-4 text-[14px] font-semibold tracking-[8px] text-[#d4a53a] uppercase">
-        About Us
-      </p>
+      <section className="site-section bg-[#FAFAFA]">
+        <div className="premium-container grid gap-12 lg:grid-cols-2 lg:items-center">
+          <div className="grid grid-cols-2 gap-3">
+            {mosaic.map((src, i) => (
+              <img
+                key={src}
+                src={resolveMediaUrl(src)}
+                alt=""
+                className={`rounded-2xl object-cover shadow-lg ring-1 ring-slate-200 ${i === 1 ? 'row-span-2 h-full min-h-[280px]' : 'aspect-square'}`}
+              />
+            ))}
+          </div>
 
-      <h2 className="font-serif text-white text-5xl md:text-7xl leading-none">
-        Crafting Quality
-      </h2>
+          <div>
+            <p className="site-eyebrow">Corporate Profile</p>
+            <h2 className="site-heading">B2B Textile Manufacturer From Surat</h2>
+            <p className="site-caption mt-4">
+              {company.name} is led by {company.proprietor} and supplies premium fabrics to wholesalers, garment manufacturers and boutique buyers across India.
+            </p>
+            <ul className="mt-6 space-y-3">
+              {strengths.map((item) => (
+                <li key={item} className="flex items-start gap-3 text-sm text-[#0B1F3A]">
+                  <FiCheckCircle className="mt-0.5 shrink-0 text-[#D4AF37]" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <div className="mt-8 grid grid-cols-2 gap-3">
+              {[['Established', company.established], ['Turnover', company.annualTurnover], ['Legal Status', company.legalStatus], ['Team', company.employees]].map(([k, v]) => (
+                <div key={k} className="rounded-xl border border-slate-200 bg-white p-4">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-[#D4AF37]">{k}</p>
+                  <p className="mt-1 font-display text-base font-extrabold text-[#0B1F3A]">{v}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
-      <h2 className="font-serif text-[#d4a53a] text-5xl md:text-7xl leading-none mt-2">
-        Since 2009
-      </h2>
+      <section className="site-section bg-[#0B1F3A] text-white">
+        <div className="premium-container grid gap-6 md:grid-cols-2">
+          <div className="rounded-2xl border border-[#D4AF37]/30 bg-white/5 p-8">
+            <Reveal3D>
+              <Tilt3D intensity={11}>
+                <div>
+                  <FiEye className="text-3xl text-[#D4AF37]" />
+                  <h3 className="mt-4 font-display text-xl font-extrabold">Our Vision</h3>
+                  <p className="site-caption-light mt-3">To be India&apos;s most trusted premium textile manufacturing partner for wholesalers and export buyers.</p>
+                </div>
+              </Tilt3D>
+            </Reveal3D>
+          </div>
+          <div className="rounded-2xl border border-[#D4AF37]/30 bg-white/5 p-8">
+            <Reveal3D delay={0.08}>
+              <Tilt3D intensity={11}>
+                <div>
+                  <FiTarget className="text-3xl text-[#D4AF37]" />
+                  <h3 className="mt-4 font-display text-xl font-extrabold">Our Mission</h3>
+                  <p className="site-caption-light mt-3">Deliver export-quality fabrics through disciplined manufacturing and transparent B2B dealing.</p>
+                </div>
+              </Tilt3D>
+            </Reveal3D>
+          </div>
+        </div>
+      </section>
 
-      <div className="mt-8 h-[2px] w-24 bg-[#d4a53a]" />
+      <section className="site-section bg-white">
+        <div className="premium-container">
+          <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="site-eyebrow">Journey</p>
+              <h2 className="site-heading">Company Timeline Since 2009</h2>
+            </div>
+            <Link to="/manufacturing" className="text-sm font-bold text-[#D4AF37]">See Manufacturing →</Link>
+          </div>
 
-      <p className="mt-8 text-white/85 text-base md:text-lg leading-9">
-        V-Colors is a trusted name in the world of fancy fabrics.
-        Based in Surat, we specialize in delivering premium quality
-        fabrics that blend innovation, elegance, and durability.
-        Our commitment to excellence and customer satisfaction
-        has helped us build long-lasting relationships across
-        the textile industry.
-      </p>
-
-      <button
-        className="
-          mt-10
-          border
-          border-[#d4a53a]
-          px-8
-          py-4
-          text-sm
-          font-semibold
-          uppercase
-          tracking-wide
-          text-[#d4a53a]
-          transition-all
-          duration-300
-          hover:bg-[#d4a53a]
-          hover:text-[#020b1f]
-        "
-      >
-        Know More About Us →
-      </button>
-    </div>
-  </div>
-</section>
-      <AnimatedSection className="section container grid gap-10 lg:grid-cols-2 !pb-0">
-        <div>
-          <SectionHeader align="left" eyebrow="Company Story" title="Established Textile Supplier Since 2009" text="Incorporated in 2009, V.Colors is engaged in manufacturing, exporting and supplying brocade fabrics, viscose fabrics, nylon net fabrics, poly net fabrics, garment fabrics and jacquard fabrics from Surat, Gujarat." />
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            {[
-              ['Proprietor', company.proprietor],
-              ['Legal Status', company.legalStatus],
-              ['Annual Turnover', company.annualTurnover],
-              ['Employees', company.employees],
-            ].map(([label, value]) => (
-              <div key={label} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                <p className="text-xs font-bold uppercase tracking-widest text-gold">{label}</p>
-                <p className="mt-2 font-semibold text-navy">{value}</p>
+          <div className="relative border-l-2 border-[#D4AF37]/40 pl-8 md:pl-10">
+            {milestones.map((item) => (
+              <div key={item.year} className="relative pb-10 last:pb-0">
+                <span className="absolute -left-[calc(1rem+5px)] top-1 grid h-4 w-4 rounded-full border-2 border-[#D4AF37] bg-white md:-left-[calc(1.25rem+5px)]" />
+                <span className="font-display text-2xl font-extrabold text-[#D4AF37]">{item.year}</span>
+                <h3 className="mt-1 font-display text-lg font-extrabold text-[#0B1F3A]">{item.title}</h3>
+                <p className="site-caption mt-2 max-w-xl">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
-        <CompanyImage src={mediaAssets.company.aboutFactory} alt="Real V Colors factory infrastructure" className="h-full min-h-[420px] rounded-[2rem] object-cover shadow-2xl" />
-      </AnimatedSection>
-      <section className="section bg-slate-50">
-        <div className="container grid gap-6 md:grid-cols-2">
-          <div className="card"><h2>Mission</h2><p>To manufacture and supply optimum quality fabrics in various specifications with reliable quality-control, warehousing, packaging and timely delivery.</p></div>
-          <div className="card"><h2>Vision</h2><p>To remain a trusted Surat textile partner for wholesalers, retailers and garment manufacturers through transparent business dealings and a wide product line.</p></div>
-        </div>
       </section>
-      <section className="section container !py-0">
-        <SectionHeader eyebrow="Core Values" title="How We Work" />
-        <div className="grid gap-5 md:grid-cols-4">{values.map((value) => <div key={value} className="rounded-3xl bg-navy p-6 text-center font-bold text-white shadow-xl">{value}</div>)}</div>
-      </section>
-      <section className="section bg-slate-50">
-        <div className="container">
-          <SectionHeader eyebrow="Timeline" title="Company Growth" />
-          <div className="grid gap-4 md:grid-cols-4">{timeline.map((item, index) => <div key={item} className="card"><span className="text-gold">0{index + 1}</span><p className="mt-3 font-semibold">{item}</p></div>)}</div>
-        </div>
-      </section>
-      <section className="section container !pt-0">
-        <SectionHeader eyebrow="Our Team" title="Professional Team Supporting Quality Fabric Supply" text="V.Colors is backed by professionals who support manufacturing, designing, quality control, warehousing, packaging, sales and marketing." />
-        <div className="grid gap-4 md:grid-cols-5">
-          {team.map((item) => <div key={item} className="rounded-2xl border border-slate-200 bg-white p-5 text-center font-semibold text-navy shadow-sm">{item}</div>)}
+
+      <section className="site-section bg-[#FAFAFA]">
+        <div className="premium-container rounded-2xl bg-[#0B1F3A] px-8 py-12 text-center text-white md:px-16">
+          <FiAward className="mx-auto text-4xl text-[#D4AF37]" />
+          <h2 className="mt-4 font-display text-2xl font-extrabold md:text-3xl">Partner With V.Colors</h2>
+          <p className="site-caption-light mx-auto mt-3 max-w-lg">Wholesale pricing, fabric sampling and bulk supply from Surat.</p>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link to="/inquiry" className="btn-gold">Start Inquiry</Link>
+            <Link to="/products" className="btn-outline-light">View Catalog</Link>
+          </div>
         </div>
       </section>
     </>

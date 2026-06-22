@@ -1,82 +1,96 @@
-import { useMemo, useState } from 'react'
-import { FiSearch, FiX } from 'react-icons/fi'
-import InquiryForm from '../components/InquiryForm'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { FiArrowUpRight, FiSearch } from 'react-icons/fi'
 import ProductCard from '../components/ProductCard'
+import CategoryPills from '../components/premium/CategoryPills'
+import FabricBackdrop from '../components/premium/FabricBackdrop'
 import SEO from '../components/SEO'
-import SectionHeader from '../components/SectionHeader'
-import { categories } from '../data/companyData'
-import { mediaAssets } from '../data/mediaAssets'
+import { fabricSlideImages } from '../data/fabricImages'
+import { productMatchesCategory, resolveCategoryFilter } from '../utils/categoryUtils'
+
 import { useProducts } from '../hooks/useProducts'
-import { resolveMediaUrl } from '../utils/resolveMediaUrl'
 
 export default function Products() {
-  const [active, setActive] = useState('All')
-  const [query, setQuery] = useState('')
-  const [selected, setSelected] = useState(null)
   const { products, loading, error } = useProducts()
+  const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
+  const [query, setQuery] = useState(searchParams.get('q') || '')
+  const [category, setCategory] = useState(resolveCategoryFilter(searchParams.get('category') || 'All'))
 
-  const filtered = useMemo(() => products.filter((product) => {
-    const matchesCategory = active === 'All' || product.category === active
-    const matchesQuery = `${product.name} ${product.description} ${product.category}`.toLowerCase().includes(query.toLowerCase())
-    return matchesCategory && matchesQuery
-  }), [active, products, query])
+  useEffect(() => {
+    setQuery(searchParams.get('q') || '')
+    setCategory(resolveCategoryFilter(searchParams.get('category') || 'All'))
+  }, [searchParams])
+
+  const categories = useMemo(() => ['All', ...new Set(products.map((p) => p.category).filter(Boolean))], [products])
+
+  const handleCategoryChange = (nextCategory) => {
+    const resolved = resolveCategoryFilter(nextCategory)
+    setCategory(resolved)
+
+    const params = new URLSearchParams(searchParams)
+    if (resolved === 'All') params.delete('category')
+    else params.set('category', resolved)
+
+    const search = params.toString()
+    navigate(search ? `/products?${search}` : '/products', { replace: true })
+  }
+
+  const filtered = products.filter((product) => {
+    const matchCat = productMatchesCategory(product.category, category)
+    const matchQuery = !query || JSON.stringify(product).toLowerCase().includes(query.toLowerCase())
+    return matchCat && matchQuery
+  })
 
   return (
     <>
-      <SEO title="Products" description="Explore V.Colors jari net embroidery fabric, embroidery fabrics, fancy fabrics, velvet fabrics, jacquard fabric and readymade laces from Surat." path="/products" />
-     <section className="page-hero relative overflow-hidden h-[650px]">
-  {/* Background Video */}
-  <video
-    autoPlay
-    muted
-    loop
-    playsInline
-    className="absolute inset-0 h-full w-full object-cover"
-  >
-    <source src={resolveMediaUrl(mediaAssets.company.productShowcaseVideo)} type="video/mp4" />
-  </video>
+      <SEO title="Fabric Catalog" description="V.Colors wholesale fabric catalog — embroidery, jacquard, velvet fabrics. Bulk quote on WhatsApp." path="/products" />
 
-  {/* Optional Dark Overlay */}
-  <div className="absolute inset-0 bg-black/40"></div>
-
-  {/* Content */}
-  <div className="container relative z-10">
-    <p className="eyebrow text-white">Products</p>
-    <h1 className="font-display text-5xl font-normal leading-tight md:text-6xl w-3xl text-white">
-      <span className="text-gold">V.Colors </span>Products Categories For 
-      <span className="text-gold"> Textile </span>
-       Buyers
-    </h1>
-  </div>
-</section>
-      <section className="section container">
-        <SectionHeader title="Search And Filter Products" text="Select a V.Colors category or search by fabric name, specification, MOQ, finish or application." />
-        {loading && <p className="mb-4 text-center font-semibold text-logo-blue">Loading products...</p>}
-        {error && <p className="mb-4 rounded-2xl bg-logo-yellow/20 p-4 text-center text-sm font-semibold text-navy">{error}</p>}
-        <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex flex-wrap gap-3">
-            {['All', ...categories].map((category) => (
-              <button key={category} onClick={() => setActive(category)} className={`rounded-full px-5 py-3 text-sm font-bold ${active === category ? 'bg-logo-gradient text-white shadow-lg' : 'bg-slate-100 text-slate-700'}`}>{category}</button>
-            ))}
+      <section className="relative overflow-hidden border-b border-slate-200 py-8 text-white md:py-10">
+        <FabricBackdrop images={fabricSlideImages} interval={5000} overlay="dark" />
+        <div className="premium-container relative z-10">
+          <h1 className="font-display text-[clamp(1.75rem,3vw,2.5rem)] font-extrabold">Fabric Catalog</h1>
+          <p className="mt-2 text-sm text-white/75">Wholesale B2B supply · Factory direct from Surat</p>
+          <div className="relative mt-5 max-w-md">
+            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-white/50" />
+            <input
+              className="w-full rounded-lg border border-white/15 bg-white/10 py-2.5 pl-10 pr-4 text-sm text-white outline-none backdrop-blur placeholder:text-white/45 focus:border-[#D4AF37]"
+              placeholder="Search fabrics..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
           </div>
-          <label className="flex min-w-[280px] items-center gap-3 rounded-full border border-slate-200 px-5 py-3">
-            <FiSearch className="text-slate-400" />
-            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products" className="w-full bg-transparent outline-none" />
-          </label>
-        </div>
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {filtered.map((product) => <ProductCard key={product._id || product.id} product={product} onInquiry={setSelected} />)}
         </div>
       </section>
-      {selected && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-navy/70 p-4 backdrop-blur">
-          <div className="max-h-[92vh] w-full max-w-2xl overflow-auto rounded-[2rem] bg-white p-6">
-            <button onClick={() => setSelected(null)} className="ml-auto grid h-10 w-10 place-items-center rounded-full bg-slate-100"><FiX /></button>
-            <SectionHeader align="left" eyebrow="Product Inquiry" title={selected.name} text={selected.description} />
-            <InquiryForm selectedProduct={selected.name} />
+
+      <CategoryPills categories={categories} active={category} onChange={handleCategoryChange} />
+
+      <section className="compact-section bg-[#FAFAFA]">
+        <div className="premium-container">
+          <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2 className="section-title">{category === 'All' ? 'All Fabrics' : category}</h2>
+              <p className="section-meta mt-1">{filtered.length} designs · Bulk orders accepted</p>
+            </div>
+            <Link to="/inquiry" className="inline-flex items-center gap-1 text-xs font-bold text-[#D4AF37]">
+              Request Quote <FiArrowUpRight />
+            </Link>
           </div>
+
+          {error && <p className="mb-4 rounded-lg bg-red-50 p-3 text-xs text-red-600">{error}</p>}
+          {loading && <p className="py-10 text-center text-xs text-slate-400">Loading catalog...</p>}
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {filtered.map((product) => (
+              <ProductCard key={product.id || product._id} product={product} tilt3d />
+            ))}
+          </div>
+
+          {!loading && !filtered.length && (
+            <p className="py-12 text-center text-xs text-slate-400">No fabrics found.</p>
+          )}
         </div>
-      )}
+      </section>
     </>
   )
 }

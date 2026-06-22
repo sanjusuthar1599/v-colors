@@ -1,7 +1,9 @@
 import { FiMapPin } from 'react-icons/fi'
 import Counter from '../components/Counter'
+import PageBanner from '../components/premium/PageBanner'
+import Reveal3D from '../components/interactive/Reveal3D'
+import Tilt3D from '../components/interactive/Tilt3D'
 import SEO from '../components/SEO'
-import SectionHeader from '../components/SectionHeader'
 import { exportMarkets } from '../data/companyData'
 import { mediaAssets } from '../data/mediaAssets'
 import { resolveMediaUrl } from '../utils/resolveMediaUrl'
@@ -9,42 +11,41 @@ import { resolveMediaUrl } from '../utils/resolveMediaUrl'
 export default function ExportMarket() {
   return (
     <>
-      <SEO title="Buyer Network" description="V.Colors serves wholesale, retail and garment industry buyers with fabric supply across India." path="/export-market" />
-      <section
-  className="bg-hero-section relative min-h-[70vh] flex items-center overflow-hidden"
-  style={{
-    backgroundImage: `url('${resolveMediaUrl(mediaAssets.company.buyerNetworkHero)}')`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
-  }}
->
-  {/* Dark Overlay */}
-  <div className="absolute inset-0 bg-black/55"></div>
+      <SEO title="Buyer Network" description="V.Colors serves wholesale and garment industry buyers across India." path="/export-market" />
+      <PageBanner
+        eyebrow="Buyer Network"
+        title="Supplying Fabrics To Industry Buyers"
+        description="Wholesale, retail and garment industry segments across India."
+        image={resolveMediaUrl(mediaAssets.company.buyerNetworkHero)}
+      />
 
-  {/* Content */}
-  <div className="container relative z-10">
-    <p className="eyebrow text-white">Buyer Network</p>
-
-    <h1 className="font-display text-5xl font-normal leading-tight md:text-6xl w-2xl text-white">
-      <span className="text-gold">Supplying </span>
-      Fabrics To Wholesale, Retail And Garment
-      <span className="text-gold"> Industry</span> Buyers
-    </h1>
-  </div>
-</section>
-      <section className="section container !py-16">
-        <SectionHeader title="Domestic Market & Buyer Segments" text="Public B2B listings mention All India as the main domestic market with buyers from textile, garment, wholesale and retail segments." />
-        <div className="relative overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white p-8 text-navy shadow-2xl shadow-slate-200/70 md:p-14">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(237,30,143,.10),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(21,159,232,.16),transparent_35%)]" />
-          <div className="relative grid gap-5 md:grid-cols-3">
-            {exportMarkets.map((market) => <div key={market} className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-sm backdrop-blur"><FiMapPin className="text-logo-blue" /> <span className="font-display text-2xl font-bold">{market}</span></div>)}
+      <section className="site-section bg-[#FAFAFA]">
+        <div className="premium-container">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="site-heading">Domestic Market & Buyer Segments</h2>
+            <p className="site-caption mt-3">Serving textile, garment, wholesale and retail buyers nationwide.</p>
           </div>
-        </div>
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          <Counter value={17} label="Years Since 2009" />
-          <Counter value={47} label="Listed Products" />
-          <Counter value={10} label="Team Members" />
+
+          <div className="relative mt-12 overflow-hidden rounded-2xl border border-slate-200 bg-white p-8 shadow-[0_24px_60px_rgba(11,31,58,0.08)] md:p-12">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {exportMarkets.map((market, index) => (
+                <Reveal3D key={market} delay={index * 0.04}>
+                  <Tilt3D intensity={10}>
+                    <div className="site-card flex items-center gap-3 !p-5">
+                      <FiMapPin className="text-xl text-[#D4AF37]" />
+                      <span className="font-display text-lg font-bold text-[#0B1F3A]">{market}</span>
+                    </div>
+                  </Tilt3D>
+                </Reveal3D>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            <Counter value={17} label="Years Since 2009" />
+            <Counter value={47} label="Listed Products" />
+            <Counter value={10} label="Team Members" />
+          </div>
         </div>
       </section>
     </>

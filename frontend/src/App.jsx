@@ -1,14 +1,11 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import ProtectedRoute from './components/ProtectedRoute'
 import ToastHost from './components/ToastHost'
-import { CartProvider } from './context/CartContext'
 import { useScrollTop } from './hooks/useScrollTop'
 import AdminLayout from './layouts/AdminLayout'
 import PublicLayout from './layouts/PublicLayout'
 import About from './pages/About'
 import Contact from './pages/Contact'
-import Cart from './pages/Cart'
-import Checkout from './pages/Checkout'
 import ExportMarket from './pages/ExportMarket'
 import Gallery from './pages/Gallery'
 import Home from './pages/Home'
@@ -16,11 +13,9 @@ import Inquiry from './pages/Inquiry'
 import Manufacturing from './pages/Manufacturing'
 import ProductDetails from './pages/ProductDetails'
 import Products from './pages/Products'
-import OrderSuccess from './pages/OrderSuccess'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import RefundPolicy from './pages/RefundPolicy'
 import TermsOfService from './pages/TermsOfService'
-import TrackOrder from './pages/TrackOrder'
 import AdminContact from './pages/admin/AdminContact'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminGallery from './pages/admin/AdminGallery'
@@ -37,11 +32,10 @@ function RouteScroll() {
 
 export default function App() {
   return (
-    <CartProvider>
-      <BrowserRouter>
-        <ToastHost />
-        <RouteScroll />
-        <Routes>
+    <BrowserRouter>
+      <ToastHost />
+      <RouteScroll />
+      <Routes>
         <Route element={<PublicLayout />}>
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
@@ -52,10 +46,10 @@ export default function App() {
           <Route path="export-market" element={<ExportMarket />} />
           <Route path="contact" element={<Contact />} />
           <Route path="inquiry" element={<Inquiry />} />
-          <Route path="cart" element={<Cart />} />
-          <Route path="checkout" element={<Checkout />} />
-          <Route path="order-success/:id" element={<OrderSuccess />} />
-          <Route path="track-order" element={<TrackOrder />} />
+          <Route path="cart" element={<Navigate to="/inquiry" replace />} />
+          <Route path="checkout" element={<Navigate to="/inquiry" replace />} />
+          <Route path="order-success/:id" element={<Navigate to="/inquiry" replace />} />
+          <Route path="track-order" element={<Navigate to="/inquiry" replace />} />
           <Route path="privacy-policy" element={<PrivacyPolicy />} />
           <Route path="terms" element={<TermsOfService />} />
           <Route path="refund-policy" element={<RefundPolicy />} />
@@ -73,8 +67,7 @@ export default function App() {
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </BrowserRouter>
-    </CartProvider>
+      </Routes>
+    </BrowserRouter>
   )
 }

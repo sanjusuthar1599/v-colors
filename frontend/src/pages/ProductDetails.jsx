@@ -1,35 +1,36 @@
-import { Link, useNavigate, useParams } from 'react-router-dom'
-import { FiCheckCircle, FiMinus, FiPlus, FiShoppingBag, FiShoppingCart, FiTruck } from 'react-icons/fi'
-import CompanyImage from '../components/CompanyImage'
+import { useState } from 'react'
+import { Link, useParams } from 'react-router-dom'
+import { FaWhatsapp } from 'react-icons/fa'
+import { FiArrowLeft, FiPhone } from 'react-icons/fi'
 import ProductCard from '../components/ProductCard'
+import ProductMediaGallery from '../components/ProductMediaGallery'
+import Reveal3D from '../components/interactive/Reveal3D'
+import Tilt3D from '../components/interactive/Tilt3D'
 import SEO from '../components/SEO'
-import SectionHeader from '../components/SectionHeader'
-import { useCart } from '../context/CartContext'
+import { company } from '../data/companyData'
 import { useProducts } from '../hooks/useProducts'
+import { getProductWhatsAppUrl } from '../utils/inquiry'
 import { matchesProductParam } from '../utils/productUtils'
+
+function getProductCode(product) {
+  const id = String(product._id || product.id || '000000')
+  return `VC-${id.slice(-6).toUpperCase()}`
+}
 
 export default function ProductDetails() {
   const { id } = useParams()
-  const navigate = useNavigate()
-  const { addToCart, getProductQuantity, updateQuantity } = useCart()
   const { products, loading } = useProducts()
   const product = products.find((item) => matchesProductParam(item, id))
-  const related = product ? products.filter((item) => !matchesProductParam(item, product.id)).filter((item) => item.id !== product.id).slice(0, 3) : []
-  const quantity = product ? getProductQuantity(product) : 0
-  const productId = product?._id || product?.id
+  const related = product ? products.filter((item) => !matchesProductParam(item, product.id)).slice(0, 3) : []
+  const [activeTab, setActiveTab] = useState('description')
 
-  const buyNow = () => {
-    addToCart(product)
-    navigate('/checkout')
-  }
+  const specs = product?.specs?.length ? product.specs : ['Premium textile grade', 'Bulk supply available', 'Export quality finishing']
+  const applications = product?.applications?.length ? product.applications : ['Garment manufacturing', 'Wholesale supply', 'Retail sourcing']
 
   if (loading) {
     return (
-      <section className="section container">
-        <div className="card text-center">
-          <h1 className="font-display text-3xl font-bold text-navy">Loading product...</h1>
-          <p className="mt-3 text-slate-600">Please wait while product details are loaded from MongoDB.</p>
-        </div>
+      <section className="site-section premium-container">
+        <p className="text-center site-caption">Loading fabric details...</p>
       </section>
     )
   }
@@ -38,83 +39,179 @@ export default function ProductDetails() {
     return (
       <>
         <SEO title="Product Not Found" description="Product not found." path="/products" />
-        <section className="section container">
-          <div className="card text-center">
-            <h1 className="font-display text-3xl font-bold text-navy">Product not found</h1>
-            <p className="mt-3 text-slate-600">This product may have been deleted or the link is incorrect.</p>
-            <Link to="/products" className="mt-6 inline-block rounded-full bg-logo-gradient px-7 py-4 font-bold text-white">Back To Products</Link>
-          </div>
+        <section className="site-section premium-container text-center">
+          <h1 className="site-heading">Product not found</h1>
+          <Link to="/products" className="btn-gold mt-6 inline-flex">Back To Catalog</Link>
         </section>
       </>
     )
   }
 
+  const detailRows = [
+    ['Fabric Type', product.category],
+    ['Material', product.material || 'On inquiry'],
+    ['Width', product.width || 'Standard wholesale widths'],
+    ['MOQ', product.moq || '30 meter'],
+    ['Lead Time', product.leadTime || '7 to 15 days'],
+    ['Product Code', getProductCode(product)],
+  ]
+
   return (
     <>
       <SEO title={product.name} description={product.description} path={`/products/${product.id}`} />
-      <section className="section container grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-start !py-8">
-        <div className="lg:sticky lg:top-28">
-          <div className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-3 shadow-2xl shadow-slate-200/80">
-            {product.video ? (
-              <video src={product.video} poster={product.image} className="h-[390px] w-full rounded-[1.5rem] bg-navy object-cover md:h-[455px]" controls muted playsInline />
-            ) : (
-              <CompanyImage src={product.image} alt={product.name} className="h-[390px] w-full rounded-[1.5rem] object-cover transition hover:scale-[1.02] md:h-[455px]" />
-            )}
-          </div>
-          <div className="mt-4 grid grid-cols-3 gap-3">
-            {[product.image, ...related.map((item) => item.image)].slice(0, 3).map((image) => <CompanyImage key={image} src={image} alt="V Colors related fabric" className="h-20 rounded-2xl border border-slate-200 object-cover shadow-sm md:h-24" />)}
-          </div>
+
+      <section className="border-b border-slate-100 bg-white py-3">
+        <div className="premium-container flex flex-wrap items-center gap-2 text-sm text-slate-500">
+          <Link to="/products" className="inline-flex items-center gap-1.5 font-medium transition hover:text-[#0B1F3A]">
+            <FiArrowLeft className="text-xs" /> Products
+          </Link>
+          <span>/</span>
+          <span className="text-[#D4AF37]">{product.category}</span>
         </div>
-        <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/70 md:p-8">
-          <p className="eyebrow !mb-3">{product.category}</p>
-          <h1 className="font-display text-3xl font-normal leading-tight md:text-3xl">{product.name}</h1>
-          <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600">{product.description}</p>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl bg-logo-yellow/20 p-4">
-              <p className="text-[11px] font-black uppercase tracking-widest text-navy">Online Price</p>
-              <p className="mt-1 font-display text-2xl font-black text-navy">
-                {product.priceAmount ? `INR ${product.priceAmount}` : 'Price on request'}
+      </section>
+
+      <section className="bg-white py-8 lg:py-12">
+        <div className="premium-container">
+          <div className="grid gap-10 lg:grid-cols-2 lg:items-start xl:gap-14">
+            <Reveal3D>
+              <Tilt3D intensity={9}>
+                <ProductMediaGallery product={product} />
+              </Tilt3D>
+            </Reveal3D>
+
+            <Reveal3D delay={0.08} className="min-w-0 pt-1">
+              <h1 className="font-display text-[clamp(1.35rem,2.2vw,1.85rem)] font-bold leading-snug tracking-tight text-[#1a1a1a]">
+                {product.name}
+              </h1>
+
+              <p className="mt-4 text-sm leading-7 text-slate-600">{product.description}</p>
+
+              <div className="mt-7 flex items-stretch gap-3">
+                <a
+                  href={getProductWhatsAppUrl(product)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex flex-1 items-center justify-center gap-2.5 rounded-sm bg-[#25D366] px-6 py-3.5 font-display text-xs font-bold uppercase tracking-[0.14em] text-white transition hover:brightness-105"
+                >
+                  <FaWhatsapp className="text-lg" />
+                  Inquiry Now
+                </a>
+                <a
+                  href={`tel:${company.phone.replace(/\s/g, '')}`}
+                  className="inline-flex w-12 shrink-0 items-center justify-center rounded-sm border border-slate-200 text-[#0B1F3A] transition hover:border-[#D4AF37] hover:text-[#D4AF37]"
+                  aria-label="Call sales team"
+                >
+                  <FiPhone className="text-lg" />
+                </a>
+              </div>
+
+              <p className="mt-6 text-sm text-slate-700">
+                <span className="font-semibold text-[#0B1F3A]">Categories:</span>{' '}
+                <Link to="/products" className="font-medium text-[#D4AF37] transition hover:text-[#0B1F3A]">
+                  {product.category}
+                </Link>
               </p>
-              {product.price && product.price !== `INR ${product.priceAmount}` && (
-                <p className="text-sm font-semibold text-slate-500">{product.price}</p>
+
+              <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 border-t border-slate-100 pt-6 text-xs text-slate-500">
+                <span>MOQ: <strong className="text-[#0B1F3A]">{product.moq || '30 meter'}</strong></span>
+                <span>Lead Time: <strong className="text-[#0B1F3A]">{product.leadTime || '7 to 15 days'}</strong></span>
+                <span>Code: <strong className="text-[#0B1F3A]">{getProductCode(product)}</strong></span>
+              </div>
+            </Reveal3D>
+          </div>
+
+          <Reveal3D className="mt-12 lg:mt-16">
+            <div className="flex border-b border-slate-200">
+              <button
+                type="button"
+                onClick={() => setActiveTab('description')}
+                className={`px-6 py-3 font-display text-xs font-bold uppercase tracking-[0.12em] transition ${
+                  activeTab === 'description'
+                    ? 'bg-[#D4AF37] text-white'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                }`}
+              >
+                Description
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('info')}
+                className={`px-6 py-3 font-display text-xs font-bold uppercase tracking-[0.12em] transition ${
+                  activeTab === 'info'
+                    ? 'bg-[#D4AF37] text-white'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                }`}
+              >
+                Additional Info
+              </button>
+            </div>
+
+            <div className="py-8">
+              {activeTab === 'description' ? (
+                <div className="max-w-3xl space-y-6 text-sm leading-7 text-slate-600">
+                  <p>{product.description}</p>
+                  <div className="grid gap-8 sm:grid-cols-2">
+                    <div>
+                      <h3 className="mb-3 font-display text-sm font-bold uppercase tracking-wide text-[#0B1F3A]">Specifications</h3>
+                      <ul className="space-y-2">
+                        {specs.map((item) => (
+                          <li key={item} className="flex items-start gap-2">
+                            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#D4AF37]" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <h3 className="mb-3 font-display text-sm font-bold uppercase tracking-wide text-[#0B1F3A]">Applications</h3>
+                      <ul className="space-y-2">
+                        {applications.map((item) => (
+                          <li key={item} className="flex items-start gap-2">
+                            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#D4AF37]" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="max-w-2xl overflow-hidden rounded-sm ring-1 ring-slate-200">
+                  <table className="w-full text-sm">
+                    <tbody>
+                      {detailRows.map(([label, value]) => (
+                        <tr key={label} className="border-b border-slate-100 last:border-0">
+                          <th className="w-40 bg-slate-50 px-5 py-3.5 text-left font-semibold text-[#0B1F3A]">{label}</th>
+                          <td className="px-5 py-3.5 text-slate-600">{value}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
-            <div className="rounded-2xl bg-logo-blue/10 p-4">
-              <p className="text-[11px] font-black uppercase tracking-widest text-logo-blue">MOQ / Delivery</p>
-              <p className="mt-1 font-display text-xl font-black text-navy">{product.moq || 'Bulk available'}</p>
-              <p className="mt-1 inline-flex items-center gap-1 text-xs font-bold text-green-700"><FiTruck /> 3-5 working days</p>
-            </div>
-          </div>
-          <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            {quantity > 0 ? (
-              <div className="inline-flex items-center justify-between rounded-full bg-navy p-1 text-white shadow-lg">
-                <button onClick={() => updateQuantity(productId, quantity - 1)} className="grid h-10 w-10 place-items-center rounded-full bg-white/10 transition hover:bg-white hover:text-navy" aria-label="Decrease quantity">
-                  <FiMinus />
-                </button>
-                <span className="min-w-20 px-3 text-center text-sm font-black">Qty {quantity}</span>
-                <button onClick={() => updateQuantity(productId, quantity + 1)} className="grid h-10 w-10 place-items-center rounded-full bg-white/10 transition hover:bg-white hover:text-navy" aria-label="Increase quantity">
-                  <FiPlus />
-                </button>
-              </div>
-            ) : (
-              <button onClick={() => addToCart(product)} className="inline-flex items-center justify-center gap-2 rounded-full bg-navy px-5 py-3 text-sm font-bold text-white shadow-lg transition hover:shadow-xl"><FiShoppingCart /> Add To Cart</button>
-            )}
-            <button onClick={buyNow} className="inline-flex items-center justify-center gap-2 rounded-full bg-logo-gradient px-5 py-3 text-sm font-bold text-white shadow-lg transition hover:shadow-xl"><FiShoppingBag /> Buy Now</button>
-          </div>
-          <div className="mt-5 grid gap-2 text-xs font-bold text-slate-600 sm:grid-cols-3">
-            {['COD Available', 'Secure Checkout', 'Wholesale Inquiry'].map((item) => <span key={item} className="inline-flex items-center gap-2 rounded-full bg-slate-50 px-3 py-2"><FiCheckCircle className="text-green-600" /> {item}</span>)}
-          </div>
-          <div className="mt-7 grid gap-4 md:grid-cols-2">
-            <div className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-lg shadow-slate-200/60"><h2 className="font-display text-xl font-black text-navy">Specifications</h2><ul className="mt-3 grid gap-2 text-sm leading-6 text-slate-600">{(product.specs.length ? product.specs : ['Category: ' + product.category, 'Bulk inquiry available', 'Latest price on request']).map((item) => <li key={item}>• {item}</li>)}</ul></div>
-            <div className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-lg shadow-slate-200/60"><h2 className="font-display text-xl font-black text-navy">Applications</h2><ul className="mt-3 grid gap-2 text-sm leading-6 text-slate-600">{(product.applications.length ? product.applications : ['Garment manufacturing', 'Wholesale supply', 'Retail fabric sourcing']).map((item) => <li key={item}>• {item}</li>)}</ul></div>
-          </div>
+          </Reveal3D>
         </div>
       </section>
-      <section className="section container">
-        <SectionHeader title="Related Products" />
-        <div className="grid gap-6 md:grid-cols-3">{related.map((item) => <ProductCard key={item.id} product={item} />)}</div>
-        <Link to="/products" className="mt-8 inline-block rounded-full bg-navy px-7 py-4 font-bold text-white">Back To Products</Link>
-      </section>
+
+      {related.length > 0 && (
+        <section className="site-section border-t border-slate-200 bg-[#FAFAFA]">
+          <div className="premium-container">
+            <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className="site-eyebrow">More Fabrics</p>
+                <h2 className="site-heading">Related Fabrics</h2>
+              </div>
+              <Link to="/products" className="text-sm font-bold text-[#D4AF37]">View Full Catalog →</Link>
+            </div>
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {related.map((item) => (
+                <ProductCard key={item.id || item._id} product={item} tilt3d />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </>
   )
 }
